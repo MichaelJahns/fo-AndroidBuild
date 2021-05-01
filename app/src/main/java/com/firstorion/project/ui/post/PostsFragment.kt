@@ -9,26 +9,37 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firstorion.project.R
 import com.firstorion.project.repo.post.Post
+import com.firstorion.project.util.Toaster
 
 class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
 
     private val postsAdapter = PostsRVAdapter(this)
+//    XML Views
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val v = inflater.inflate(R.layout.fragment_posts, container, false)
-
-        val rv = v.findViewById<RecyclerView>(R.id.postsRecyclerView)
-        rv.layoutManager = LinearLayoutManager(v.context)
-        rv.adapter = postsAdapter
-
-        return v
+        val view = inflater.inflate(R.layout.fragment_posts, container, false)
+        bindUI(view)
+        setupRecyclerView()
+        return view
     }
 
+    private fun bindUI(view: View){
+        recyclerView = view.findViewById(R.id.postsRecyclerView)
+    }
+    private fun setupRecyclerView(){
+        recyclerView.layoutManager = LinearLayoutManager(activity!!.applicationContext)
+        recyclerView.adapter = postsAdapter
+    }
 
     override fun onPostClicked(post: Post) {
+        Toaster.futureToast(activity!!.applicationContext)
         TODO("Not yet implemented")
+//        get Post userID
+//        get UserInfo from userID
+//        Navigate away from this activity to another
     }
 }
