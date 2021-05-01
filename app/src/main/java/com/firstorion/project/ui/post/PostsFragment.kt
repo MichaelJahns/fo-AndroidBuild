@@ -5,8 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Button
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,11 +19,11 @@ import com.firstorion.project.repo.post.Post
 import com.firstorion.project.util.PostsViewModelFactory
 import com.firstorion.project.util.Toaster
 import com.firstorion.project.viewmodel.post.PostsViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
+class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
+
 
     private lateinit var postsAdapter: PostsRVAdapter
     private lateinit var postViewModel: PostsViewModel
@@ -45,7 +48,7 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
        postViewModel.getAllPosts().observe(viewLifecycleOwner, Observer<List<Post>> { postList ->
            setupRecyclerView(postList)
            Log.e("POSTFRAG", "Setup Observers")
-           if(postList.isNotEmpty()){
+           if (postList.isNotEmpty()) {
                Log.e("POSTFRAG", postList[0].title)
            }
        })
@@ -63,16 +66,20 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
     }
     private fun setupRecyclerView(postList: List<Post>){
         postsAdapter = PostsRVAdapter(this, postList)
+        postsAdapter.setListener(object : PostsRVAdapter.OnPostClickedListener{
+            override fun onPostClicked(post: Post) {
+                Log.e("POSTFRAG", "Clicked")
+                Toaster.futureToast(activity!!.applicationContext)
+            }
+
+        })
         recyclerView.layoutManager = LinearLayoutManager(activity!!.applicationContext)
         recyclerView.adapter = postsAdapter
     }
 
     override fun onPostClicked(post: Post) {
+        Log.e("POSTFRAG", "Clicked")
         Toaster.futureToast(activity!!.applicationContext)
-        TODO("Not yet implemented")
-//        get Post userID
-//        get UserInfo from userID
-//        Navigate away from this activity to another
     }
 
 }

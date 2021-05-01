@@ -12,7 +12,7 @@ import com.firstorion.project.repo.post.Post
  * Feel free to change as you wish
  * */
 class PostsRVAdapter(
-    private val postClickedListener: OnPostClickedListener,
+    private var postClickedListener: OnPostClickedListener,
     private val postList: List<Post>
 ): RecyclerView.Adapter<PostsRVAdapter.PostViewHolder>() {
 
@@ -41,5 +41,8 @@ class PostsRVAdapter(
         fun onPostClicked(post: Post)
     }
 
+    fun setListener(listener: OnPostClickedListener) {
+        this.postClickedListener = listener
+    }
 
 }

@@ -15,7 +15,7 @@ interface IPostsDatabase {
     @Query("SELECT * FROM post_table")
     fun getAllPosts(): LiveData<List<Post>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPost(post: Post)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
