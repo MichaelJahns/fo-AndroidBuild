@@ -58,11 +58,11 @@ dependencies {
 
 
 
-    // Room for database - optional but preferred
-//    def room_version = "2.2.6"
-//    implementation "androidx.room:room-runtime:$room_version"
-//    kapt "androidx.room:room-compiler:$room_version"
-//    implementation "androidx.room:room-ktx:$room_version"
+//     Room for database - optional but preferred
+    def room_version = "2.2.6"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
 
 
     testImplementation 'junit:junit:4.13.2'

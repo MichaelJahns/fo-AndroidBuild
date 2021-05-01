@@ -27,7 +27,12 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
         postsAdapter = PostsRVAdapter(this, list)
         bindUI(view)
         setupRecyclerView()
+        setupObservers()
         return view
+    }
+
+    private fun setupObservers() {
+        TODO("Not yet implemented")
     }
 
     private fun bindUI(view: View){
