@@ -1,5 +1,6 @@
 package com.firstorion.project.repo.post
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -15,5 +16,6 @@ import androidx.room.Query
 interface IPostsDatabase {
 
     @Query("SELECT * FROM post_table")
-    fun getAllPosts(): List<Post>
+    fun getAllPosts(): LiveData<List<Post>>
+
 }

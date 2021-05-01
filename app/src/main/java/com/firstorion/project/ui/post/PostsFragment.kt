@@ -1,15 +1,19 @@
 package com.firstorion.project.ui.post
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firstorion.project.R
 import com.firstorion.project.repo.post.Post
 import com.firstorion.project.util.Toaster
+import com.firstorion.project.viewmodel.post.PostsViewModel
 
 class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
 
@@ -26,12 +30,14 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
         postsAdapter = PostsRVAdapter(this, list)
         bindUI(view)
         setupRecyclerView()
-        setupObservers()
         return view
     }
 
     private fun setupObservers() {
-        TODO("Not yet implemented")
+        var model: PostsViewModel = ViewModelProvider.AndroidViewModelFactory(activity!!.application).create(PostsViewModel::class.java)
+        model.getAllPosts().observe(this, Observer<List<Post>> { postList ->
+            Log.e("POSTFRAG", postList.toString())
+        })
     }
 
     private fun bindUI(view: View){
