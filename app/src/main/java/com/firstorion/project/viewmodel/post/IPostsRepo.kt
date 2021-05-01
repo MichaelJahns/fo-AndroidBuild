@@ -19,7 +19,7 @@ import com.firstorion.project.repo.post.Post
 interface IPostsRepo {
 
     fun getAllPosts(): LiveData<List<Post>>
-    fun uploadPost(userId: Int, body: String, title: String)
-    fun deleteAllPosts()
+    suspend fun uploadPost(userId: Int, body: String, title: String)
+    suspend fun deleteAllPosts()
 
 }

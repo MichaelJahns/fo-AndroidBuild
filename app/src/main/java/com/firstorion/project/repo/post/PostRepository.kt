@@ -19,11 +19,11 @@ class PostRepository(application: Application) : IPostsRepo {
         return postDao.getAllPosts()
     }
 
-    override fun uploadPost(userId: Int, body: String, title: String) {
-        TODO("Not yet implemented")
+    override suspend fun uploadPost(userId: Int, body: String, title: String) {
+        postDao.insertPost(Post(userId, 100 ,body, title))
     }
 
-    override fun deleteAllPosts() {
-        TODO("Not yet implemented")
+    override suspend fun deleteAllPosts() {
+        postDao.deleteAllPosts()
     }
 }

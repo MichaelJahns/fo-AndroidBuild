@@ -5,11 +5,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firstorion.project.R
@@ -17,6 +16,9 @@ import com.firstorion.project.repo.post.Post
 import com.firstorion.project.util.PostsViewModelFactory
 import com.firstorion.project.util.Toaster
 import com.firstorion.project.viewmodel.post.PostsViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
 
@@ -25,29 +27,38 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
     private lateinit var postsViewModelFactory: PostsViewModelFactory
 //    XML Views
     private lateinit var recyclerView: RecyclerView
+    private lateinit var testButton: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_posts, container, false)
-        val list: List<Post> = getDumbyData()
-        bindUI(view)
-        postsAdapter = PostsRVAdapter(this, list)
         postsViewModelFactory = PostsViewModelFactory(activity!!.application)
         postViewModel = ViewModelProvider(this, postsViewModelFactory).get(PostsViewModel::class.java)
+        bindUI(view)
         setupObservers()
         return view
     }
 
     private fun setupObservers() {
        postViewModel.getAllPosts().observe(viewLifecycleOwner, Observer<List<Post>> { postList ->
-           Log.e("POSTFRAG", postList.toString())
            setupRecyclerView(postList)
+           Log.e("POSTFRAG", "Setup Observers")
+           if(postList.isNotEmpty()){
+               Log.e("POSTFRAG", postList[0].title)
+           }
        })
     }
 
     private fun bindUI(view: View){
+        testButton = view.findViewById(R.id.button)
+        testButton.setOnClickListener(View.OnClickListener {
+            Toaster.futureToast(activity!!.applicationContext);
+            GlobalScope.launch {
+                postViewModel.insertPost()
+            }
+        })
         recyclerView = view.findViewById(R.id.postsRecyclerView)
     }
     private fun setupRecyclerView(postList: List<Post>){
@@ -62,12 +73,6 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
 //        get Post userID
 //        get UserInfo from userID
 //        Navigate away from this activity to another
-    }
-    private fun getDumbyData(): List<Post>{
-        val p1 = Post(0,0,"First", "a")
-        val p2 = Post(1,1,"Second", "b")
-        val p3 = Post(2,2,"Third", "c")
-        return listOf(p1, p2, p3)
     }
 
 }

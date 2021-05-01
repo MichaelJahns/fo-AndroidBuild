@@ -13,13 +13,13 @@ import com.firstorion.project.repo.post.PostRepository
  * Please do not remove postsRepo from the constructor.
  * */
 class PostsViewModel(application: Application) : ViewModel() {
-    lateinit var postsRepo: PostRepository
-    init{
-        postsRepo = PostRepository(application)
-    }
+    var postsRepo: PostRepository = PostRepository(application)
 
     fun getAllPosts(): LiveData<List<Post>> {
         return postsRepo.getAllPosts()
+    }
+    suspend fun insertPost(){
+        postsRepo.uploadPost(10, "Or maybe something old", "Dreaming of something new")
     }
     fun getPostsFromApi(){
         // TODO Add your implementation here
