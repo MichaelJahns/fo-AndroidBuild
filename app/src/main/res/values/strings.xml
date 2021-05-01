@@ -2,4 +2,7 @@
     <string name="app_name">First Orion Project</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="posts_title">Posts</string>
+    <string name="post_title">Title</string>
+    <string name="post_body">Body</string>
+    <string name="post_userId">UserId</string>
 </resources>
