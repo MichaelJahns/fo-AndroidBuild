@@ -1,6 +1,5 @@
 package com.firstorion.project.ui.post
 
-import android.print.PrintDocumentAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +17,7 @@ class PostsRVAdapter(
 ): RecyclerView.Adapter<PostsRVAdapter.PostViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        val view = LayoutInflater.from(parent?.context).inflate(R.layout.post_row, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.post_row, parent, false)
         return PostViewHolder(view)
     }
 

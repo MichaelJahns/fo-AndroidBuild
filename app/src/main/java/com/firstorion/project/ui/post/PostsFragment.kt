@@ -1,7 +1,6 @@
 package com.firstorion.project.ui.post
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +22,7 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_posts, container, false)
-        var list: List<Post> = getDumbyData()
+        val list: List<Post> = getDumbyData()
         postsAdapter = PostsRVAdapter(this, list)
         bindUI(view)
         setupRecyclerView()
@@ -51,9 +50,9 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
 //        Navigate away from this activity to another
     }
     private fun getDumbyData(): List<Post>{
-        val p1: Post = Post(0,0,"First", "a")
-        val p2: Post = Post(1,1,"Second", "b")
-        val p3: Post = Post(2,2,"Third", "c")
+        val p1 = Post(0,0,"First", "a")
+        val p2 = Post(1,1,"Second", "b")
+        val p3 = Post(2,2,"Third", "c")
         return listOf(p1, p2, p3)
     }
 
