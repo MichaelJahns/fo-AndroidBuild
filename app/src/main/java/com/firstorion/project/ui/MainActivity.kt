@@ -20,8 +20,7 @@ import java.lang.Exception
 
 class MainActivity :
     AppCompatActivity(),
-    PostsFragment.OnCourierClickedHandler,
-    UserFragment.OnCourierClickHandler{
+    PostsFragment.tester{
 
     private lateinit var postFragment: PostsFragment
     private lateinit var userFragment: UserFragment
@@ -36,19 +35,11 @@ class MainActivity :
                 .commit()
         }
     }
-    override fun handleNavigationToUserDetails(userId: Int) {
+
+    override fun foo() {
         supportFragmentManager.beginTransaction()
             .add(R.id.fragmentContainer, userFragment)
             .commit()
     }
 
-    override fun handleNavigationToPostList(){
-        supportFragmentManager.beginTransaction()
-            .add(R.id.fragmentContainer, postFragment)
-            .commit()
-    }
-
-    interface myInterface{
-        fun myAction()
-    }
 }

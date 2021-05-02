@@ -16,6 +16,8 @@ import com.firstorion.project.repo.user.User
  * */
 interface IUsersRepo {
     fun getAllUsers()
+    suspend fun insertUsers(userList: List<User>)
     suspend fun getUserWithId(userId: Int): User?
     suspend fun deleteAllUsers()
+    suspend fun deleteUserById(userId: Int)
 }

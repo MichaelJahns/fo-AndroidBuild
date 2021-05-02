@@ -78,10 +78,10 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
 
     private fun courierPost() {
         val intent = Intent(context, CreatePostActivity::class.java)
-        CreatePostContract.launch(intent)
+        createPostContract.launch(intent)
     }
 
-    private val CreatePostContract =
+    private val createPostContract =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val title = result.data!!.getStringExtra("postTitle")
@@ -99,7 +99,7 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
         Toaster.makeToast(requireContext(), "Clicked upon post: ${post.postId}")
     }
 
-    interface OnCourierClickedHandler {
-        fun handleNavigationToUserDetails(userId: Int)
+    interface tester{
+        fun foo()
     }
 }
