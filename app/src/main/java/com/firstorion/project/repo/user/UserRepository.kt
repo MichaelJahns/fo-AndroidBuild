@@ -5,34 +5,44 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import com.firstorion.project.database.UserDatabase
 import com.firstorion.project.network.UserApi
+import com.firstorion.project.repo.post.Post
 import com.firstorion.project.viewmodel.user.IUsersRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Response
+import kotlin.math.atan
 
 class UserRepository(
     application: Application,
     private val userApi: UserApi
 ): IUsersRepo {
     private val userDao: IUsersDatabase
+    private var activeUser: LiveData<User>
+
 
     init {
         val db = UserDatabase.getInstance(application)
         userDao = db.userDao()
         apiCallAndPutInDB()
+        activeUser = userDao.getUserWithId(0)
+    }
+
+    override fun getActiveUser(): LiveData<User> {
+        return activeUser
     }
     override fun getAllUsers() {
+        userDao.getAllUsers()
+    }
 
+    override fun getUserWithId(userId: Int): LiveData<User> {
+        activeUser = userDao.getUserWithId(userId)
+        return activeUser
     }
 
     override suspend fun insertUsers(userList: List<User>) {
         userDao.insertUsers(userList)
-    }
-
-    override suspend fun getUserWithId(userId: Int): User? {
-        return userDao.getUserWithId(userId)
     }
 
     override suspend fun deleteAllUsers() {

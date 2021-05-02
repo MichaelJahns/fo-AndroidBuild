@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -24,34 +25,35 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class UserFragment(
-    private var postsViewModel: PostsViewModel
+    private var postsViewModel: PostsViewModel,
+    private var usersViewModel: UsersViewModel
 ) : Fragment(), PostsRVAdapter.OnPostClickedListener{
-
-    private lateinit var userViewModel: UsersViewModel
-    private lateinit var userViewModelFactory: UsersViewModelFactory
 //    XML VIEWS
     private lateinit var recyclerView: RecyclerView
+    private lateinit var tvName: TextView
+    private lateinit var tvUserName: TextView
+    private lateinit var tvEmail: TextView
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view =inflater.inflate(R.layout.fragment_user, container, false)
-        userViewModelFactory = UsersViewModelFactory(
-            requireActivity().application,
-            UserApi(RetrofitInstance.userApi)
-        )
-        userViewModel = ViewModelProvider(this, userViewModelFactory).get(UsersViewModel::class.java)
         initializeUI(view)
         val bundle = this.arguments
         val userId = bundle!!.getInt("userId")
         setupObservers(userId)
         GlobalScope.launch(Dispatchers.IO){
-            userViewModel.getUserWithId(userId)
+            usersViewModel.getUserWithId(userId)
         }
         return view
     }
+
     private fun initializeUI(view: View){
+        tvName = view.findViewById(R.id.tvName)
+        tvUserName = view.findViewById(R.id.tvUserName)
+        tvEmail = view.findViewById(R.id.tvUserEmail)
         recyclerView = view.findViewById(R.id.usersRecyclerView)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -61,13 +63,24 @@ class UserFragment(
         val adapter = PostsRVAdapter(this, postList)
         recyclerView.adapter = adapter
     }
-    
+    private fun updateUser(user: User){
+        tvName.text = user.name
+        tvUserName.text = user.userName
+        tvEmail.text = user.email
+    }
+
     private fun setupObservers(userId: Int){
         postsViewModel.getAllPostsFromUserWithId(userId).observe(viewLifecycleOwner, Observer { postList ->
             updateUI(postList)
         })
+        usersViewModel.getActiveUser().observe(viewLifecycleOwner, Observer { user ->
+            if(user != null) {
+                updateUser(user)
+            }
+        })
     }
     override fun onPostClicked(post: Post) {
+        activity?.supportFragmentManager?.popBackStack()
         Log.e("UserFragment", "I've been clicked")
     }
 

@@ -13,9 +13,9 @@ import retrofit2.http.Path
  * */
 interface IUsersNetwork {
 
-    @GET("/users/")
-    fun getUserWithId(@Path("userId") userId: Int): User
     @GET("/users/{userId}")
+    fun getUserWithId(@Path("userId") userId: Int): User?
+    @GET("/users")
     fun getAllUsersFromApi(): Call<List<User>>
 
 }

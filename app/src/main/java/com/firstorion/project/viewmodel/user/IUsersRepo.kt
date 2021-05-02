@@ -1,5 +1,6 @@
 package com.firstorion.project.viewmodel.user
 
+import androidx.lifecycle.LiveData
 import com.firstorion.project.repo.user.User
 
 /**
@@ -16,8 +17,9 @@ import com.firstorion.project.repo.user.User
  * */
 interface IUsersRepo {
     fun getAllUsers()
+    fun getActiveUser(): LiveData<User>
+    fun getUserWithId(userId: Int): LiveData<User>
     suspend fun insertUsers(userList: List<User>)
-    suspend fun getUserWithId(userId: Int): User?
     suspend fun deleteAllUsers()
     suspend fun deleteUserById(userId: Int)
 }

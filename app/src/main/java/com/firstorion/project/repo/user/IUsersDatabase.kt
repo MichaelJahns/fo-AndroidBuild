@@ -1,5 +1,6 @@
 package com.firstorion.project.repo.user
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -12,9 +13,10 @@ import androidx.room.Query
  * */
 @Dao
 interface IUsersDatabase {
-
+    @Query("SELECT *FROM user_table")
+    fun getAllUsers(): List<User>
     @Query("SELECT * FROM user_table WHERE userId = :userId")
-    fun getUserWithId(userId: Int): User?
+    fun getUserWithId(userId: Int): LiveData<User>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertUser(user: User)
     @Insert(onConflict = OnConflictStrategy.REPLACE)

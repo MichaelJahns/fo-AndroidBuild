@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,15 +20,19 @@ import com.firstorion.project.R
 import com.firstorion.project.network.PostApi
 import com.firstorion.project.network.RetrofitInstance
 import com.firstorion.project.repo.post.Post
+import com.firstorion.project.repo.user.User
 import com.firstorion.project.ui.user.UserFragment
 import com.firstorion.project.viewmodel.post.PostsViewModelFactory
 import com.firstorion.project.util.Toaster
 import com.firstorion.project.viewmodel.post.PostsViewModel
+import com.firstorion.project.viewmodel.user.UsersViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
+class PostsFragment(
+    private val usersViewModel: UsersViewModel
+): Fragment(), PostsRVAdapter.OnPostClickedListener {
     private var mHandler: Handler = Handler(Looper.getMainLooper())
     private lateinit var postViewModel: PostsViewModel
     private lateinit var postsViewModelFactory: PostsViewModelFactory
@@ -50,7 +55,7 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
         )
         postViewModel =
             ViewModelProvider(this, postsViewModelFactory).get(PostsViewModel::class.java)
-        userFragment = UserFragment(postViewModel)
+        userFragment = UserFragment(postViewModel, usersViewModel)
         initializeUI(view)
         setUpObservers()
         return view
@@ -100,12 +105,17 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
     override fun onPostClicked(post: Post) {
         val bundle = Bundle()
         bundle.putInt("userId", post.userId)
+        prepareTransition(post.userId)
         userFragment.arguments = bundle
         parentFragmentManager
             .beginTransaction()
             .replace(R.id.fragmentContainer, userFragment)
+            .addToBackStack(null)
             .commit()
 
         Toaster.makeToast(requireContext(), "Clicked upon post: ${post.postId}")
+    }
+    fun prepareTransition(userId: Int): LiveData<User> {
+        return usersViewModel.getUserWithId(userId)
     }
 }

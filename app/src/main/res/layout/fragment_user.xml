@@ -6,20 +6,39 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.user.UserFragment">
 
+
+
     <TextView
-        android:text="USER PAGE"
+        android:id="@+id/tvUserName"
+        android:text="@string/username"
         android:gravity="center"
-        android:id="@+id/topper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvName"
+        android:text="@string/name"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tvUserName"/>
+
+    <TextView
+        android:id="@+id/tvUserEmail"
+        android:text="@string/email"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tvName"/>
+
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/usersRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/topper"
-
+        app:layout_constraintTop_toBottomOf="@id/tvUserEmail"
 />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
