@@ -34,7 +34,7 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
     private var mHandler: Handler = Handler(Looper.getMainLooper())
 
 
-    private lateinit var postsAdapter: PostsRVAdapter
+    private lateinit var postAdapter: PostsRVAdapter
     private lateinit var postViewModel: PostsViewModel
     private lateinit var postsViewModelFactory: PostsViewModelFactory
 //    XML Views
@@ -46,11 +46,12 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_posts, container, false)
+        bindUI(view)
+        Log.e("Early Bind"," Message")
         postsViewModelFactory = PostsViewModelFactory(
             activity!!.application,
             PostApi(RetrofitInstance.api))
         postViewModel = ViewModelProvider(this, postsViewModelFactory).get(PostsViewModel::class.java)
-        bindUI(view)
         getCurrentData()
         return view
     }
@@ -64,9 +65,9 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
                 val response = api.getAllPostsFromAllUsers().awaitResponse()
                 if(response.isSuccessful){
                     val data = response.body()!!
-                    Log.e("SUCK", data[0].title)
                     mHandler.post(Runnable {
-                        setupRecyclerView(data)
+                        Log.e("SuckLess", data.isEmpty().toString())
+                        retrieveList(data)
                     })
                 }
             }catch (exception: Exception){
@@ -74,24 +75,24 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
             }
         }
     }
+
+
+    private fun retrieveList(postList: List<Post>){
+        val adapter =  PostsRVAdapter(this, postList)
+        recyclerView.adapter = adapter
+    }
+
     private fun bindUI(view: View){
+        var emptyList = listOf<Post>()
+        recyclerView = view.findViewById(R.id.postsRecyclerView)
+        recyclerView.setHasFixedSize(true)
+        recyclerView.layoutManager =LinearLayoutManager(activity!!.applicationContext)
+        val adapter = PostsRVAdapter(this, emptyList)
+        recyclerView.adapter = adapter
         testButton = view.findViewById(R.id.button)
         testButton.setOnClickListener(View.OnClickListener {
-//            getCurrentData()
+            getCurrentData()
         })
-        recyclerView = view.findViewById(R.id.postsRecyclerView)
-    }
-    private fun setupRecyclerView(postList: List<Post>){
-        postsAdapter = PostsRVAdapter(this, postList)
-        recyclerView.adapter = postsAdapter
-        postsAdapter.setListener(object : PostsRVAdapter.OnPostClickedListener{
-            override fun onPostClicked(post: Post) {
-                Log.e("POSTFRAG", "Clicked")
-                Toaster.futureToast(activity!!.applicationContext)
-            }
-
-        })
-        recyclerView.layoutManager = LinearLayoutManager(activity!!.applicationContext)
     }
 
     override fun onPostClicked(post: Post) {
