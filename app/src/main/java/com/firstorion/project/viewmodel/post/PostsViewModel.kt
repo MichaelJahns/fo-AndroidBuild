@@ -19,16 +19,11 @@ import java.lang.Exception
 class PostsViewModel(
     private var postsRepository: PostRepository
 ) : ViewModel() {
-
-    val isListVisibile = MutableLiveData<Boolean>()
-    fun setListVisibleFalse(){
-        isListVisibile.value = false
-    }
-    fun setListVisibleTrue(){
-        isListVisibile.value = true
-    }
     fun getPosts() :LiveData<List<Post>> {
         return postsRepository.getAllPosts()
+    }
+    fun getAllPostsFromUserWithId(userId: Int): LiveData<List<Post>>{
+        return postsRepository.getAllPostsFromUserWithId(userId)
     }
     suspend fun insertPost(post: Post){
         postsRepository.uploadPost(post)

@@ -13,6 +13,7 @@ import androidx.room.Query
 @Dao
 interface IUsersDatabase {
 
+    @Query("SELECT * FROM user_table WHERE userId = :userId")
     fun getUserWithId(userId: Int): User?
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertUser(user: User)

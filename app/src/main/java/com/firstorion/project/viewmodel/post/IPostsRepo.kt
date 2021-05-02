@@ -18,6 +18,7 @@ import com.firstorion.project.repo.post.Post
 interface IPostsRepo {
 
     fun getAllPosts(): LiveData<List<Post>>
+    fun getAllPostsFromUserWithId(userId: Int): LiveData<List<Post>>
     suspend fun uploadPost(post: Post)
     suspend fun insertPosts(postList: List<Post>)
     suspend fun deleteAllPosts()

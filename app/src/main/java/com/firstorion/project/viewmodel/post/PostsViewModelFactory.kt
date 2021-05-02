@@ -1,12 +1,10 @@
-package com.firstorion.project.util
+package com.firstorion.project.viewmodel.post
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.firstorion.project.database.PostDatabase_Impl
 import com.firstorion.project.network.PostApi
 import com.firstorion.project.repo.post.PostRepository
-import com.firstorion.project.viewmodel.post.PostsViewModel
 
 class PostsViewModelFactory(
     private val mApplication: Application,

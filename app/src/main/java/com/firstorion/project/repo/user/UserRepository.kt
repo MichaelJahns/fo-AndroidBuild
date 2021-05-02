@@ -54,8 +54,8 @@ class UserRepository(
                             }
                         }
                     }
-                }            }
-
+                }
+            }
             override fun onFailure(call: Call<List<User>>, t: Throwable) {
                 Log.e("UserRepository", "Failed to GET From API")
             }

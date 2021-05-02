@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,8 +19,8 @@ import com.firstorion.project.R
 import com.firstorion.project.network.PostApi
 import com.firstorion.project.network.RetrofitInstance
 import com.firstorion.project.repo.post.Post
-import com.firstorion.project.ui.MainActivity
-import com.firstorion.project.util.PostsViewModelFactory
+import com.firstorion.project.ui.user.UserFragment
+import com.firstorion.project.viewmodel.post.PostsViewModelFactory
 import com.firstorion.project.util.Toaster
 import com.firstorion.project.viewmodel.post.PostsViewModel
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +31,8 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
     private var mHandler: Handler = Handler(Looper.getMainLooper())
     private lateinit var postViewModel: PostsViewModel
     private lateinit var postsViewModelFactory: PostsViewModelFactory
+
+    private lateinit var userFragment: UserFragment
 
     //    XML Views
     private lateinit var recyclerView: RecyclerView
@@ -45,10 +46,11 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
         val view = inflater.inflate(R.layout.fragment_posts, container, false)
         postsViewModelFactory = PostsViewModelFactory(
             requireActivity().application,
-            PostApi(RetrofitInstance.api)
+            PostApi(RetrofitInstance.postApi)
         )
         postViewModel =
             ViewModelProvider(this, postsViewModelFactory).get(PostsViewModel::class.java)
+        userFragment = UserFragment(postViewModel)
         initializeUI(view)
         setUpObservers()
         return view
@@ -96,10 +98,14 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
         }
 
     override fun onPostClicked(post: Post) {
-        Toaster.makeToast(requireContext(), "Clicked upon post: ${post.postId}")
-    }
+        val bundle = Bundle()
+        bundle.putInt("userId", post.userId)
+        userFragment.arguments = bundle
+        parentFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragmentContainer, userFragment)
+            .commit()
 
-    interface tester{
-        fun foo()
+        Toaster.makeToast(requireContext(), "Clicked upon post: ${post.postId}")
     }
 }

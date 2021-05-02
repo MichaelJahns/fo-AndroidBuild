@@ -31,6 +31,10 @@ class PostRepository(
         return postDao.getAllPosts()
     }
 
+    override fun getAllPostsFromUserWithId(userId: Int): LiveData<List<Post>> {
+        return postDao.getAllPostsFromUserWithId(userId)
+    }
+
     override suspend fun uploadPost(post: Post) {
         createPostFromApi(post).enqueue(object : retrofit2.Callback<Post>{
             override fun onResponse(call: Call<Post>, response: Response<Post>) {

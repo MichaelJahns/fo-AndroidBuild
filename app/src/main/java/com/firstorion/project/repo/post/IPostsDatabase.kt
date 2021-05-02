@@ -12,8 +12,12 @@ import androidx.room.*
 @Dao
 interface IPostsDatabase {
 
+
     @Query("SELECT * FROM post_table")
     fun getAllPosts(): LiveData<List<Post>>
+
+    @Query("SELECT * FROM post_table WHERE userId = :userId")
+    fun getAllPostsFromUserWithId(userId: Int): LiveData<List<Post>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPost(post: Post)
