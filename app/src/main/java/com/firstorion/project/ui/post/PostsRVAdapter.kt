@@ -44,5 +44,4 @@ class PostsRVAdapter(
     fun setListener(listener: OnPostClickedListener) {
         this.postClickedListener = listener
     }
-
 }

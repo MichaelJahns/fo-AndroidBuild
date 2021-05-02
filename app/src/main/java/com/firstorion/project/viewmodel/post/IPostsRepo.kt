@@ -20,6 +20,7 @@ interface IPostsRepo {
 
     fun getAllPosts(): LiveData<List<Post>>
     suspend fun uploadPost(userId: Int, body: String, title: String)
+    suspend fun uploadPosts(postList: List<Post>)
     suspend fun deleteAllPosts()
 
 }

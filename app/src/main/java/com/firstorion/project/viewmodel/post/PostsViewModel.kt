@@ -1,27 +1,40 @@
 package com.firstorion.project.viewmodel.post
 
-import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.firstorion.project.repo.post.IPostsDatabase
+import androidx.lifecycle.liveData
 import com.firstorion.project.repo.post.Post
+
 import com.firstorion.project.repo.post.PostRepository
+import com.firstorion.project.util.Resource
+import kotlinx.coroutines.Dispatchers
+import java.lang.Exception
 
 /**
  * This class will get the `Post` data from `postRepo` that will be displayed on `PostsFragment` fragment.
  *
  * Please do not remove postsRepo from the constructor.
  * */
-class PostsViewModel(application: Application) : ViewModel() {
-    var postsRepo: PostRepository = PostRepository(application)
+class PostsViewModel(
+    private var postsRepository: PostRepository
+) : ViewModel() {
 
-    fun getAllPosts(): LiveData<List<Post>> {
-        return postsRepo.getAllPosts()
+    fun getPosts() :LiveData<List<Post>> {
+        return postsRepository.getAllPosts()
     }
     suspend fun insertPost(){
-        postsRepo.uploadPost(10, "Or maybe something old", "Dreaming of something new")
+        postsRepository.uploadPost(10, "Or maybe something old", "Dreaming of something new")
     }
-    fun getPostsFromApi(){
-        // TODO Add your implementation here
+    suspend fun getPostsFromApi(){
+        postsRepository.getAllPostsFromApi()
+    }
+
+    fun getAllPosts() = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try{
+            emit(Resource.success(data = postsRepository.getAllPostsFromApi()))
+        } catch (e: Exception){
+            emit(Resource.error(data = null, message = e.message ?: "error"))
+        }
     }
 }
