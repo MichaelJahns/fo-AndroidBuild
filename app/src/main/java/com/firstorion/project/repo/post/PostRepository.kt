@@ -5,17 +5,12 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import com.firstorion.project.database.PostDatabase
 import com.firstorion.project.network.PostApi
-import com.firstorion.project.network.RetrofitInstance
-import com.firstorion.project.util.Toaster
 import com.firstorion.project.viewmodel.post.IPostsRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Response
-import retrofit2.await
-import retrofit2.awaitResponse
-import javax.security.auth.callback.Callback
 
 
 class PostRepository(
@@ -37,10 +32,24 @@ class PostRepository(
     }
 
     override suspend fun uploadPost(userId: Int, body: String, title: String) {
-        postDao.insertPost(Post(userId, 100 ,body, title))
+        var tempPost = Post(userId, null, body, title)
+        createPostFromApi(tempPost).enqueue(object : retrofit2.Callback<Post>{
+            override fun onResponse(call: Call<Post>, response: Response<Post>) {
+                Log.e("Api", "pre IF")
+                if(response.isSuccessful && response.body() != null) {
+                    Log.e("Api", "${response.body()!!.postId}")
+                    GlobalScope.launch(Dispatchers.IO) {
+                        postDao.insertPost(response.body()!!)
+                    }
+                }
+            }
+            override fun onFailure(call: Call<Post>, t: Throwable) {
+                Log.e("PostRepository", "Failed to POST to API")
+            }
+        } )
     }
 
-    override suspend fun uploadPosts(postList: List<Post>) {
+    override suspend fun insertPosts(postList: List<Post>) {
         postDao.insertListOfPosts(postList)
     }
 
@@ -56,18 +65,19 @@ class PostRepository(
                     when (response.code()) {
                         200 -> {
                             GlobalScope.launch(Dispatchers.IO) {
-                                uploadPosts(response.body()!!)
+                                insertPosts(response.body()!!)
                             }
                         }
                     }
                 }
             }
             override fun onFailure(call: Call<List<Post>>, t: Throwable) {
-                Log.e("PostRepo", "Failed to make API call")            }
-
+                Log.e("PostRepository", "Failed to GET From API")
+            }
         })
     }
 
     // API METHODS
     fun getAllPostsFromApi() = postApi.getAllPostsFromApi()
+    fun createPostFromApi(post: Post) = postApi.createPost(post)
 }

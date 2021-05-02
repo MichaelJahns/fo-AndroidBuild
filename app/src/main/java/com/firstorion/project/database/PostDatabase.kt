@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-@Database(entities = [(Post::class)], version = 1)
+@Database(entities = [(Post::class)], version = 2)
 abstract class PostDatabase : RoomDatabase() {
     abstract fun postDao() : IPostsDatabase
 

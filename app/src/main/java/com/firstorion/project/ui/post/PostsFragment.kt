@@ -18,6 +18,7 @@ import com.firstorion.project.network.PostApi
 import com.firstorion.project.network.RetrofitInstance
 import com.firstorion.project.repo.post.Post
 import com.firstorion.project.util.PostsViewModelFactory
+import com.firstorion.project.util.Toaster
 import com.firstorion.project.viewmodel.post.PostsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -30,18 +31,18 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
 //    XML Views
     private lateinit var recyclerView: RecyclerView
     private lateinit var testButton: Button
+    private lateinit var courierPost: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_posts, container, false)
-        initializeUI(view)
-
         postsViewModelFactory = PostsViewModelFactory(
             activity!!.application,
             PostApi(RetrofitInstance.api))
         postViewModel = ViewModelProvider(this, postsViewModelFactory).get(PostsViewModel::class.java)
+        initializeUI(view)
         setUpObservers()
         return view
     }
@@ -56,13 +57,18 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
         recyclerView = view.findViewById(R.id.postsRecyclerView)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager =LinearLayoutManager(activity!!.applicationContext)
-        updateUI(listOf<Post>())
-        testButton = view.findViewById(R.id.button)
-        testButton.setOnClickListener(View.OnClickListener {
+        courierPost = view.findViewById(R.id.courierMakePost)
+        courierPost.setOnClickListener(View.OnClickListener{
             GlobalScope.launch(Dispatchers.IO){
                 postViewModel.insertPost()
+                Log.e("postfrag", "attempted")
             }
         })
+        testButton = view.findViewById(R.id.button)
+        testButton.setOnClickListener(View.OnClickListener {
+
+        })
+        updateUI(listOf<Post>())
     }
 
     private fun updateUI(postList: List<Post>){
@@ -71,7 +77,6 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
     }
 
     override fun onPostClicked(post: Post) {
-        Log.d("OnClick", "Clicked Post ${post.postId}")
+        Toaster.makeToast(activity!!.applicationContext, "Clicked upon post: ${post.postId}")
     }
-
 }

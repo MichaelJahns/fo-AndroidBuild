@@ -1,7 +1,9 @@
 package com.firstorion.project.repo.post
 
 import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 
 /**
  * The interface that will provide the network communication between https://jsonplaceholder.typicode.com/posts and the app
@@ -15,6 +17,7 @@ interface IPostsNetwork {
 
     @GET("/posts")
     fun getAllPostsFromAllUsers(): Call<List<Post>>
-    fun uploadPost(userId: Int, title: String, body: String): Post
+    @POST("/posts")
+    fun createPost(@Body post:Post): Call<Post>
 
 }

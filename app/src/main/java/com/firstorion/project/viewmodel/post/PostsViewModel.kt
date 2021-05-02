@@ -23,6 +23,6 @@ class PostsViewModel(
         return postsRepository.getAllPosts()
     }
     suspend fun insertPost(){
-        postsRepository.uploadPost(11, "Or maybe something old", "Dreaming of something new")
+        postsRepository.uploadPost(11, "Gaze upon my works, ye mighty and despair", "In my travels I came across an antique land")
     }
 }
