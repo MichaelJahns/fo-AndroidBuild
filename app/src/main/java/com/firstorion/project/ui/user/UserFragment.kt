@@ -16,4 +16,7 @@ class UserFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_user, container, false)
     }
 
+    interface OnCourierClickHandler {
+        fun handleNavigationToPostList()
+    }
 }

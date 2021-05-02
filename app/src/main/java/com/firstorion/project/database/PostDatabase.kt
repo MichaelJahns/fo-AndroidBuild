@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-@Database(entities = [(Post::class)], version = 2)
+@Database(entities = [(Post::class)], version = 3)
 abstract class PostDatabase : RoomDatabase() {
     abstract fun postDao() : IPostsDatabase
 
@@ -31,24 +31,10 @@ abstract class PostDatabase : RoomDatabase() {
                         "post_database"
                     )
                         .fallbackToDestructiveMigration()
-                        .addCallback(seedDatabaseCallback(context))
                         .build()
                     INSTANCE = instance
                 }
                 return instance
-            }
-        }
-        private fun seedDatabaseCallback(context: Context) : Callback {
-            return object : Callback() {
-                override fun onCreate(db: SupportSQLiteDatabase) {
-                    super.onCreate(db)
-                    GlobalScope.launch(Dispatchers.IO){
-                        val postDao = getInstance(context)!!.postDao()
-                        postDao.insertPost(Post(0,0,"First", "a"))
-                        postDao.insertPost(Post(1,1,"Second", "b"))
-                        postDao.insertPost(Post(2,2,"Third", "c"))
-                    }
-                }
             }
         }
     }

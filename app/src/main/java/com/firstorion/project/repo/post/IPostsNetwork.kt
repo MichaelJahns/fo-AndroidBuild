@@ -18,8 +18,7 @@ interface IPostsNetwork {
 
     @GET("/posts")
     fun getAllPostsFromApi(): Call<List<Post>>
-    @GET("/users")
-    fun getAllUsersFromApi(): Call<List<User>>
+
     @POST("/posts")
     fun createPost(@Body post:Post): Call<Post>
 

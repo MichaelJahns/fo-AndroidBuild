@@ -1,5 +1,9 @@
 package com.firstorion.project.repo.user
 
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.http.Path
+
 /**
  *  The interface that will provide the network communication between https://jsonplaceholder.typicode.com/users and the app
  *
@@ -9,6 +13,9 @@ package com.firstorion.project.repo.user
  * */
 interface IUsersNetwork {
 
-    fun getUserWithId(userId: Int): User
+    @GET("/users/")
+    fun getUserWithId(@Path("userId") userId: Int): User
+    @GET("/users/{userId}")
+    fun getAllUsersFromApi(): Call<List<User>>
 
 }

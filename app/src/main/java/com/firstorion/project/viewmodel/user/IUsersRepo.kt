@@ -15,7 +15,7 @@ import com.firstorion.project.repo.user.User
  * More functions can be added if needed but please do not remove any function.
  * */
 interface IUsersRepo {
-
-    fun getUserWithId(userId: Int): User?
-    fun deleteAllUsers()
+    fun getAllUsers()
+    suspend fun getUserWithId(userId: Int): User?
+    suspend fun deleteAllUsers()
 }

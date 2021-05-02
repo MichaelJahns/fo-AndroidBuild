@@ -1,6 +1,7 @@
 package com.firstorion.project.viewmodel.post
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.firstorion.project.repo.post.Post
@@ -19,6 +20,13 @@ class PostsViewModel(
     private var postsRepository: PostRepository
 ) : ViewModel() {
 
+    val isListVisibile = MutableLiveData<Boolean>()
+    fun setListVisibleFalse(){
+        isListVisibile.value = false
+    }
+    fun setListVisibleTrue(){
+        isListVisibile.value = true
+    }
     fun getPosts() :LiveData<List<Post>> {
         return postsRepository.getAllPosts()
     }

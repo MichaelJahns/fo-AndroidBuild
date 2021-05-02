@@ -10,7 +10,14 @@ import androidx.lifecycle.ViewModel
 class UsersViewModel(
     private val usersRepo: IUsersRepo
 ) : ViewModel() {
-
-    // TODO Add your implementation here
+    fun getAllUsers(){
+        usersRepo.getAllUsers()
+    }
+    suspend  fun deleteAllUsers(){
+        usersRepo.deleteAllUsers()
+    }
+    suspend fun getUserWithId(userId: Int){
+        usersRepo.getUserWithId(userId)
+    }
 
 }
