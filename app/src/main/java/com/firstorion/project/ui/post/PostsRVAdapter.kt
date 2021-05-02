@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.firstorion.project.R
 import com.firstorion.project.repo.post.Post
@@ -31,17 +32,27 @@ class PostsRVAdapter(
         return postList.size
     }
 
-    inner class PostViewHolder(v: View): RecyclerView.ViewHolder(v){
+    inner class PostViewHolder(v: View):
+            RecyclerView.ViewHolder(v),
+            View.OnClickListener
+    {
         val postTitle: TextView = v.findViewById(R.id.tvPostTitle)
         val postBody: TextView = v.findViewById(R.id.tvPostBody)
         val postUserId: TextView = v.findViewById(R.id.tvPostUserId)
+
+        init {
+            v.setOnClickListener(this)
+        }
+
+        override fun onClick(p0: View?) {
+            val position = adapterPosition
+            if( position != RecyclerView.NO_POSITION){
+                postClickedListener.onPostClicked(postList[position])
+            }
+        }
     }
 
     interface OnPostClickedListener{
         fun onPostClicked(post: Post)
-    }
-
-    fun setListener(listener: OnPostClickedListener) {
-        this.postClickedListener = listener
     }
 }
