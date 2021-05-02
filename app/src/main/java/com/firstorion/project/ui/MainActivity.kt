@@ -16,9 +16,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        getCurrentData()
-
         // You can remove this if you want to use another approach
         if(savedInstanceState == null){
             val postFragment = PostsFragment()
@@ -28,25 +25,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-    private fun getCurrentData() {
-        val api = RetrofitInstance.api
-        Log.e("MAINACT", "Attempting retrofit")
 
-        GlobalScope.launch(Dispatchers.IO){
-            try {
-                val response = api.getAllPostsFromAllUsers().awaitResponse()
-                if(response.isSuccessful){
-                    val data = response.body()!!
-                    Log.e("MAINACT", data[0].title)
-                }else{
-                    var exception: Exception = Exception()
-                    throw exception
-                }
-            }catch (exception: Exception){
-                Log.e("MAINACT", exception.message.toString())
-            }
-        }
-    }
 
 
 }

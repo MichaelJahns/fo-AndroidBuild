@@ -64,13 +64,13 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
                 val response = api.getAllPostsFromAllUsers().awaitResponse()
                 if(response.isSuccessful){
                     val data = response.body()!!
-                    Log.e("POSTFRAG", data[0].title)
+                    Log.e("SUCK", data[0].title)
                     mHandler.post(Runnable {
                         setupRecyclerView(data)
                     })
                 }
             }catch (exception: Exception){
-                Log.e("POSTFRAG", exception.toString())
+                Log.e("BIG SUCK", exception.toString())
             }
         }
     }
