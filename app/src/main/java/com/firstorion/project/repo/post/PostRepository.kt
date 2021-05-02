@@ -35,9 +35,7 @@ class PostRepository(
         var tempPost = Post(userId, null, body, title)
         createPostFromApi(tempPost).enqueue(object : retrofit2.Callback<Post>{
             override fun onResponse(call: Call<Post>, response: Response<Post>) {
-                Log.e("Api", "pre IF")
                 if(response.isSuccessful && response.body() != null) {
-                    Log.e("Api", "${response.body()!!.postId}")
                     GlobalScope.launch(Dispatchers.IO) {
                         postDao.insertPost(response.body()!!)
                     }

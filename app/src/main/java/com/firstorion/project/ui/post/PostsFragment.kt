@@ -1,9 +1,10 @@
 package com.firstorion.project.ui.post
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,12 +18,10 @@ import com.firstorion.project.R
 import com.firstorion.project.network.PostApi
 import com.firstorion.project.network.RetrofitInstance
 import com.firstorion.project.repo.post.Post
+import com.firstorion.project.ui.CreatePostActivity
 import com.firstorion.project.util.PostsViewModelFactory
 import com.firstorion.project.util.Toaster
 import com.firstorion.project.viewmodel.post.PostsViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
     private var mHandler: Handler = Handler(Looper.getMainLooper())
@@ -34,12 +33,13 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
     private lateinit var courierPost: Button
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_posts, container, false)
         postsViewModelFactory = PostsViewModelFactory(
-            activity!!.application,
+            requireActivity().application,
             PostApi(RetrofitInstance.api))
         postViewModel = ViewModelProvider(this, postsViewModelFactory).get(PostsViewModel::class.java)
         initializeUI(view)
@@ -56,13 +56,10 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
     private fun initializeUI(view: View){
         recyclerView = view.findViewById(R.id.postsRecyclerView)
         recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager =LinearLayoutManager(activity!!.applicationContext)
+        recyclerView.layoutManager =LinearLayoutManager(requireContext())
         courierPost = view.findViewById(R.id.courierMakePost)
         courierPost.setOnClickListener(View.OnClickListener{
-            GlobalScope.launch(Dispatchers.IO){
-                postViewModel.insertPost()
-                Log.e("postfrag", "attempted")
-            }
+            courierPost()
         })
         testButton = view.findViewById(R.id.button)
         testButton.setOnClickListener(View.OnClickListener {
@@ -77,6 +74,22 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
     }
 
     override fun onPostClicked(post: Post) {
-        Toaster.makeToast(activity!!.applicationContext, "Clicked upon post: ${post.postId}")
+        Toaster.makeToast(requireContext(), "Clicked upon post: ${post.postId}")
+    }
+
+    private fun courierPost(){
+        val intent = Intent(requireContext(), CreatePostActivity::class.java)
+        startActivityForResult(intent, 0)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == 0){
+            if( resultCode == Activity.RESULT_OK){
+                val title = data?.getStringExtra("postTitle")
+                val body = data?.getStringExtra("postBody")
+                val tempPost = Post(12, null, body!!, title!!)
+            }
+        }
     }
 }
