@@ -31,9 +31,8 @@ class PostRepository(
         return postDao.getAllPosts()
     }
 
-    override suspend fun uploadPost(userId: Int, body: String, title: String) {
-        var tempPost = Post(userId, null, body, title)
-        createPostFromApi(tempPost).enqueue(object : retrofit2.Callback<Post>{
+    override suspend fun uploadPost(post: Post) {
+        createPostFromApi(post).enqueue(object : retrofit2.Callback<Post>{
             override fun onResponse(call: Call<Post>, response: Response<Post>) {
                 if(response.isSuccessful && response.body() != null) {
                     GlobalScope.launch(Dispatchers.IO) {
@@ -55,9 +54,8 @@ class PostRepository(
         postDao.deleteAllPosts()
     }
 
-
     private fun apiCallAndPutinDB(){
-        postApi.getAllPostsFromApi().enqueue(object : retrofit2.Callback<List<Post>> {
+        getAllPostsFromApi().enqueue(object : retrofit2.Callback<List<Post>> {
             override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
                 if(response.isSuccessful && response.body() != null) {
                     when (response.code()) {
@@ -76,6 +74,6 @@ class PostRepository(
     }
 
     // API METHODS
-    fun getAllPostsFromApi() = postApi.getAllPostsFromApi()
-    fun createPostFromApi(post: Post) = postApi.createPost(post)
+    private fun getAllPostsFromApi() = postApi.getAllPostsFromApi()
+    private fun createPostFromApi(post: Post) = postApi.createPost(post)
 }

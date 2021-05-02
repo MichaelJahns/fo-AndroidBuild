@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FirstOrionProject">
-        <activity android:name=".ui.post.CreatePosActivity"></activity>
+        <activity android:name=".ui.post.CreatePostActivity"></activity>
         <activity
             android:name=".ui.CreatePostActivity"
             android:label="@string/title_activity_create_post"

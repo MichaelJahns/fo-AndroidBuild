@@ -22,7 +22,7 @@ class PostsViewModel(
     fun getPosts() :LiveData<List<Post>> {
         return postsRepository.getAllPosts()
     }
-    suspend fun insertPost(){
-        postsRepository.uploadPost(11, "Gaze upon my works, ye mighty and despair", "In my travels I came across an antique land")
+    suspend fun insertPost(post: Post){
+        postsRepository.uploadPost(post)
     }
 }

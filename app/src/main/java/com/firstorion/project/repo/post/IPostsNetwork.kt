@@ -1,5 +1,6 @@
 package com.firstorion.project.repo.post
 
+import com.firstorion.project.repo.user.User
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -16,7 +17,9 @@ import retrofit2.http.POST
 interface IPostsNetwork {
 
     @GET("/posts")
-    fun getAllPostsFromAllUsers(): Call<List<Post>>
+    fun getAllPostsFromApi(): Call<List<Post>>
+    @GET("/users")
+    fun getAllUsersFromApi(): Call<List<User>>
     @POST("/posts")
     fun createPost(@Body post:Post): Call<Post>
 

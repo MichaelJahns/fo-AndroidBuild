@@ -5,12 +5,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -21,26 +20,39 @@ import com.firstorion.project.R
 import com.firstorion.project.network.PostApi
 import com.firstorion.project.network.RetrofitInstance
 import com.firstorion.project.repo.post.Post
-import com.firstorion.project.ui.CreatePostActivity
 import com.firstorion.project.util.PostsViewModelFactory
 import com.firstorion.project.util.Toaster
 import com.firstorion.project.viewmodel.post.PostsViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
-class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
-    val createPostContract = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
-        if(result.resultCode == Activity.RESULT_OK){
-            var capture = result.data
-        }else{
-
+class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener {
+    val createPostContract =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val title = result.data?.getStringExtra("postTitle")
+                val body = result.data?.getStringExtra("postBody")
+                val tempPost = Post(12, null, body!!, title!!)
+                GlobalScope.launch (Dispatchers.IO){
+                    postViewModel.insertPost(tempPost)
+                }
+                Toaster.makeToast(requireContext(), "Sent Post: ${tempPost.title} to API")
+            }
+            if (result.resultCode == Activity.RESULT_CANCELED) {
+                Toaster.makeToast(requireContext(), "Post Creation Cancelled")
+            }
+            else {
+            Log.e("PostFragment", "An error occured creating the post")
+            }
         }
-    }
 
     private var mHandler: Handler = Handler(Looper.getMainLooper())
     private lateinit var postViewModel: PostsViewModel
     private lateinit var postsViewModelFactory: PostsViewModelFactory
-//    XML Views
+
+    //    XML Views
     private lateinit var recyclerView: RecyclerView
-    private lateinit var testButton: Button
     private lateinit var courierPost: Button
 
     override fun onCreateView(
@@ -51,8 +63,10 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
         val view = inflater.inflate(R.layout.fragment_posts, container, false)
         postsViewModelFactory = PostsViewModelFactory(
             requireActivity().application,
-            PostApi(RetrofitInstance.api))
-        postViewModel = ViewModelProvider(this, postsViewModelFactory).get(PostsViewModel::class.java)
+            PostApi(RetrofitInstance.api)
+        )
+        postViewModel =
+            ViewModelProvider(this, postsViewModelFactory).get(PostsViewModel::class.java)
         initializeUI(view)
         setUpObservers()
         return view
@@ -64,22 +78,18 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
         })
     }
 
-    private fun initializeUI(view: View){
+    private fun initializeUI(view: View) {
         recyclerView = view.findViewById(R.id.postsRecyclerView)
         recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager =LinearLayoutManager(requireContext())
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         courierPost = view.findViewById(R.id.courierMakePost)
-        courierPost.setOnClickListener(View.OnClickListener{
+        courierPost.setOnClickListener(View.OnClickListener {
             courierPost()
-        })
-        testButton = view.findViewById(R.id.button)
-        testButton.setOnClickListener(View.OnClickListener {
-
         })
         updateUI(listOf<Post>())
     }
 
-    private fun updateUI(postList: List<Post>){
+    private fun updateUI(postList: List<Post>) {
         val adapter = PostsRVAdapter(this, postList)
         recyclerView.adapter = adapter
     }
@@ -88,18 +98,16 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
         Toaster.makeToast(requireContext(), "Clicked upon post: ${post.postId}")
     }
 
-    private fun courierPost(){
-        val intent = Intent(requireContext(), CreatePosActivity::class.java)
+    private fun courierPost() {
+        val intent = Intent(requireContext(), CreatePostActivity::class.java)
         createPostContract.launch(intent)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == 0){
-            if( resultCode == Activity.RESULT_OK){
-                val title = data?.getStringExtra("postTitle")
-                val body = data?.getStringExtra("postBody")
-                val tempPost = Post(12, null, body!!, title!!)
+        if (requestCode == 0) {
+            if (resultCode == Activity.RESULT_OK) {
+
             }
         }
     }
