@@ -4,32 +4,28 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
-import com.firstorion.project.repo.post.IPostsDatabase
-import com.firstorion.project.repo.post.Post
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.firstorion.project.repo.user.IUsersDatabase
+import com.firstorion.project.repo.user.User
 
-@Database(entities = [(Post::class)], version = 3)
-abstract class PostDatabase : RoomDatabase() {
+@Database(entities = [(User::class)], version = 1)
+abstract class UserDatabase : RoomDatabase() {
 
-    abstract fun postDao() : IPostsDatabase
+    abstract fun userDao() : IUsersDatabase
 
     companion object{
 
         @Volatile
-        private var INSTANCE: PostDatabase ?= null
+        private var INSTANCE: UserDatabase ?= null
 
-        fun getInstance(context: Context): PostDatabase{
+        fun getInstance(context: Context): UserDatabase{
             synchronized(this){
                 var instance = INSTANCE
 
                 if(instance == null){
                     instance = Room.databaseBuilder(
                         context,
-                        PostDatabase::class.java,
-                        "post_database"
+                        UserDatabase::class.java,
+                        "user_database"
                     )
                         .fallbackToDestructiveMigration()
                         .build()

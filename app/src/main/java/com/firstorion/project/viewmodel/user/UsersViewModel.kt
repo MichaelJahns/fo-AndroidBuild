@@ -1,6 +1,8 @@
 package com.firstorion.project.viewmodel.user
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import com.firstorion.project.repo.user.User
 
 /**
  * This class will get the `User` data from `usersRepo` that will be displayed on the `UsersFragment` fragment.
@@ -10,7 +12,17 @@ import androidx.lifecycle.ViewModel
 class UsersViewModel(
     private val usersRepo: IUsersRepo
 ) : ViewModel() {
-
-    // TODO Add your implementation here
+    fun getActiveUser(): LiveData<User>{
+        return usersRepo.getActiveUser()
+    }
+    fun getAllUsers(){
+        usersRepo.getAllUsers()
+    }
+    suspend  fun deleteAllUsers(){
+        usersRepo.deleteAllUsers()
+    }
+    fun getUserWithId(userId: Int) :LiveData<User>{
+        return usersRepo.getUserWithId(userId)
+    }
 
 }

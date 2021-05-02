@@ -1,9 +1,7 @@
 package com.firstorion.project.repo.post
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.lifecycle.LiveData
+import androidx.room.*
 
 
 /**
@@ -14,6 +12,22 @@ import androidx.room.Query
 @Dao
 interface IPostsDatabase {
 
+
     @Query("SELECT * FROM post_table")
-    fun getAllPosts(): List<Post>
+    fun getAllPosts(): LiveData<List<Post>>
+
+    @Query("SELECT * FROM post_table WHERE userId = :userId")
+    fun getAllPostsFromUserWithId(userId: Int): LiveData<List<Post>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPost(post: Post)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertListOfPosts(postList: List<Post>)
+
+    @Query("DELETE FROM post_table")
+    suspend fun deleteAllPosts()
+
+    @Query("SELECT * FROM post_table WHERE userId = :userId")
+    suspend fun getAllPostsByUser(userId: Int): List<Post>
 }

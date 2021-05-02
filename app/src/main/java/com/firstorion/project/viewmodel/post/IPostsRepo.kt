@@ -1,5 +1,6 @@
 package com.firstorion.project.viewmodel.post
 
+import androidx.lifecycle.LiveData
 import com.firstorion.project.repo.post.Post
 
 /**
@@ -16,8 +17,10 @@ import com.firstorion.project.repo.post.Post
  * */
 interface IPostsRepo {
 
-    fun getAllPosts(): List<Post>
-    fun uploadPost(userId: Int, body: String, title: String)
-    fun deleteAllPosts()
+    fun getAllPosts(): LiveData<List<Post>>
+    fun getAllPostsFromUserWithId(userId: Int): LiveData<List<Post>>
+    suspend fun uploadPost(post: Post)
+    suspend fun insertPosts(postList: List<Post>)
+    suspend fun deleteAllPosts()
 
 }
