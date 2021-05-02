@@ -9,6 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -24,6 +27,14 @@ import com.firstorion.project.util.Toaster
 import com.firstorion.project.viewmodel.post.PostsViewModel
 
 class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
+    val createPostContract = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
+        if(result.resultCode == Activity.RESULT_OK){
+            var capture = result.data
+        }else{
+
+        }
+    }
+
     private var mHandler: Handler = Handler(Looper.getMainLooper())
     private lateinit var postViewModel: PostsViewModel
     private lateinit var postsViewModelFactory: PostsViewModelFactory
@@ -78,8 +89,8 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
     }
 
     private fun courierPost(){
-        val intent = Intent(requireContext(), CreatePostActivity::class.java)
-        startActivityForResult(intent, 0)
+        val intent = Intent(requireContext(), CreatePosActivity::class.java)
+        createPostContract.launch(intent)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

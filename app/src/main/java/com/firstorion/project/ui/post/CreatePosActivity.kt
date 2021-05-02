@@ -1,33 +1,22 @@
-package com.firstorion.project.ui
+package com.firstorion.project.ui.post
 
 import android.app.Activity
 import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.firstorion.project.R
-import com.firstorion.project.repo.post.Post
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import retrofit2.http.Body
 
-class CreatePostActivity : AppCompatActivity() {
+class CreatePosActivity : AppCompatActivity() {
     private lateinit var submitPost: Button
     private lateinit var etPostTitle: EditText
     private lateinit var etPostBody: EditText
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-        setContentView(R.layout.activity_create_post)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_create_pos)
         initializeUI()
     }
 
