@@ -1,6 +1,8 @@
 package com.firstorion.project.ui.post
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,8 +21,17 @@ import com.firstorion.project.util.PostsViewModelFactory
 import com.firstorion.project.util.Status
 import com.firstorion.project.util.Toaster
 import com.firstorion.project.viewmodel.post.PostsViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.Dispatcher
+import retrofit2.Retrofit
+import retrofit2.awaitResponse
+import java.lang.Exception
 
 class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
+    private var mHandler: Handler = Handler(Looper.getMainLooper())
 
 
     private lateinit var postsAdapter: PostsRVAdapter
@@ -40,43 +51,33 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
             PostApi(RetrofitInstance.api))
         postViewModel = ViewModelProvider(this, postsViewModelFactory).get(PostsViewModel::class.java)
         bindUI(view)
-
-
-        setupObservers()
+        getCurrentData()
         return view
     }
 
-    private fun setupObservers() {
-       postViewModel.getAllPosts().observe(viewLifecycleOwner, Observer {
-           it?.let { resource ->
-           when(resource.status){
-               Status.SUCCESS -> {
-                   recyclerView.visibility = View.VISIBLE
-//                   progressBar.visibility = View.GONE
-                   resource.data?.let { posts -> retrieveList(posts) }
-               }
-               Status.ERROR -> {
-                   recyclerView.visibility = View.VISIBLE
-//                   progressBar.visibility = View.GONE
-               }
-               Status.LOADING -> {
-//                   progressBar.visibility = View.VISIBLE
-                   recyclerView.visibility = View.GONE
-               }
-           }
+    private fun getCurrentData() {
+        val api = RetrofitInstance.api
+        Log.e("POSTFRAG", "Attempting retrofit")
 
-       }
-       })
+        GlobalScope.launch(Dispatchers.IO){
+            try {
+                val response = api.getAllPostsFromAllUsers().awaitResponse()
+                if(response.isSuccessful){
+                    val data = response.body()!!
+                    Log.e("POSTFRAG", data[0].title)
+                    mHandler.post(Runnable {
+                        setupRecyclerView(data)
+                    })
+                }
+            }catch (exception: Exception){
+                Log.e("POSTFRAG", exception.toString())
+            }
+        }
     }
-
-    private fun retrieveList(posts: List<Post>) {
-        setupRecyclerView(posts)
-    }
-
     private fun bindUI(view: View){
         testButton = view.findViewById(R.id.button)
         testButton.setOnClickListener(View.OnClickListener {
-            Toaster.futureToast(activity!!.applicationContext);
+//            getCurrentData()
         })
         recyclerView = view.findViewById(R.id.postsRecyclerView)
     }
@@ -97,5 +98,6 @@ class PostsFragment : Fragment(), PostsRVAdapter.OnPostClickedListener{
         Log.e("POSTFRAG", "Clicked")
         Toaster.futureToast(activity!!.applicationContext)
     }
+
 
 }

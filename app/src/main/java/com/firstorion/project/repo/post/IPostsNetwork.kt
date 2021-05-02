@@ -1,5 +1,6 @@
 package com.firstorion.project.repo.post
 
+import retrofit2.Call
 import retrofit2.http.GET
 
 /**
@@ -12,8 +13,8 @@ import retrofit2.http.GET
 
 interface IPostsNetwork {
 
-    @GET("posts/")
-    suspend fun getAllPostsFromAllUsers(): List<Post>
+    @GET("/posts")
+    fun getAllPostsFromAllUsers(): Call<List<Post>>
     fun uploadPost(userId: Int, title: String, body: String): Post
 
 }
