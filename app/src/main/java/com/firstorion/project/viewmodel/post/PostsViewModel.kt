@@ -23,18 +23,6 @@ class PostsViewModel(
         return postsRepository.getAllPosts()
     }
     suspend fun insertPost(){
-        postsRepository.uploadPost(10, "Or maybe something old", "Dreaming of something new")
-    }
-    suspend fun getPostsFromApi(){
-        postsRepository.getAllPostsFromApi()
-    }
-
-    fun getAllPosts() = liveData(Dispatchers.IO) {
-        emit(Resource.loading(data = null))
-        try{
-            emit(Resource.success(data = postsRepository.getAllPostsFromApi()))
-        } catch (e: Exception){
-            emit(Resource.error(data = null, message = e.message ?: "error"))
-        }
+        postsRepository.uploadPost(11, "Or maybe something old", "Dreaming of something new")
     }
 }

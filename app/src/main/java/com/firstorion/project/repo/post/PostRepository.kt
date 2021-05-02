@@ -6,9 +6,16 @@ import androidx.lifecycle.LiveData
 import com.firstorion.project.database.PostDatabase
 import com.firstorion.project.network.PostApi
 import com.firstorion.project.network.RetrofitInstance
+import com.firstorion.project.util.Toaster
 import com.firstorion.project.viewmodel.post.IPostsRepo
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Response
+import retrofit2.await
+import retrofit2.awaitResponse
+import javax.security.auth.callback.Callback
 
 
 class PostRepository(
@@ -16,15 +23,14 @@ class PostRepository(
     private val postApi: PostApi
     ) : IPostsRepo {
     private val postDao: IPostsDatabase
-    private val allPosts: LiveData<List<Post>>
+    private var allPosts: LiveData<List<Post>>
 
     init{
         val db = PostDatabase.getInstance(application)
-        postDao = db!!.postDao()
-//        before you pull allPosts, make the API request, and save it to the DB
+        postDao = db.postDao()
+        apiCallAndPutinDB()
         allPosts = postDao.getAllPosts()
     }
-
 
     override fun getAllPosts(): LiveData<List<Post>> {
         return postDao.getAllPosts()
@@ -42,5 +48,26 @@ class PostRepository(
         postDao.deleteAllPosts()
     }
 
-    suspend fun getAllPostsFromApi() = postApi.getAllPostsFromApi()
+
+    private fun apiCallAndPutinDB(){
+        postApi.getAllPostsFromApi().enqueue(object : retrofit2.Callback<List<Post>> {
+            override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
+                if(response.isSuccessful && response.body() != null) {
+                    when (response.code()) {
+                        200 -> {
+                            GlobalScope.launch(Dispatchers.IO) {
+                                uploadPosts(response.body()!!)
+                            }
+                        }
+                    }
+                }
+            }
+            override fun onFailure(call: Call<List<Post>>, t: Throwable) {
+                Log.e("PostRepo", "Failed to make API call")            }
+
+        })
+    }
+
+    // API METHODS
+    fun getAllPostsFromApi() = postApi.getAllPostsFromApi()
 }
