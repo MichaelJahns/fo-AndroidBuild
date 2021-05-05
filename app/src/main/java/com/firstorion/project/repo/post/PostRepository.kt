@@ -27,6 +27,26 @@ class PostRepository(
         allPosts = postDao.getAllPosts()
     }
 
+    private fun apiCallAndPutinDB(){
+        getAllPostsFromApi().enqueue(object : retrofit2.Callback<List<Post>> {
+            override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
+                if(response.isSuccessful && response.body() != null) {
+                    when (response.code()) {
+                        200 -> {
+                            GlobalScope.launch(Dispatchers.IO) {
+                                insertPosts(response.body()!!)
+                            }
+                        }
+                    }
+                }
+            }
+            override fun onFailure(call: Call<List<Post>>, t: Throwable) {
+                Log.e("PostRepository", "Failed to GET From API")
+            }
+        })
+    }
+
+//    OVERRIDES
     override fun getAllPosts(): LiveData<List<Post>> {
         return postDao.getAllPosts()
     }
@@ -56,25 +76,6 @@ class PostRepository(
 
     override suspend fun deleteAllPosts() {
         postDao.deleteAllPosts()
-    }
-
-    private fun apiCallAndPutinDB(){
-        getAllPostsFromApi().enqueue(object : retrofit2.Callback<List<Post>> {
-            override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
-                if(response.isSuccessful && response.body() != null) {
-                    when (response.code()) {
-                        200 -> {
-                            GlobalScope.launch(Dispatchers.IO) {
-                                insertPosts(response.body()!!)
-                            }
-                        }
-                    }
-                }
-            }
-            override fun onFailure(call: Call<List<Post>>, t: Throwable) {
-                Log.e("PostRepository", "Failed to GET From API")
-            }
-        })
     }
 
     // API METHODS

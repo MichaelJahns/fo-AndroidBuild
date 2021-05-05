@@ -4,12 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.firstorion.project.repo.post.IPostsDatabase
 import com.firstorion.project.repo.post.Post
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 @Database(entities = [(Post::class)], version = 3)
 abstract class PostDatabase : RoomDatabase() {

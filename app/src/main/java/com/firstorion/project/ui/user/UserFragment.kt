@@ -25,8 +25,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class UserFragment(
-    private var postsViewModel: PostsViewModel,
-    private var usersViewModel: UsersViewModel
+    private var usersViewModel: UsersViewModel,
+    private var postsViewModel: PostsViewModel
 ) : Fragment(), PostsRVAdapter.OnPostClickedListener{
 //    XML VIEWS
     private lateinit var recyclerView: RecyclerView
@@ -44,9 +44,6 @@ class UserFragment(
         val bundle = this.arguments
         val userId = bundle!!.getInt("userId")
         setupObservers(userId)
-        GlobalScope.launch(Dispatchers.IO){
-            usersViewModel.getUserWithId(userId)
-        }
         return view
     }
 
@@ -70,18 +67,17 @@ class UserFragment(
     }
 
     private fun setupObservers(userId: Int){
-        postsViewModel.getAllPostsFromUserWithId(userId).observe(viewLifecycleOwner, Observer { postList ->
-            updateUI(postList)
-        })
         usersViewModel.getActiveUser().observe(viewLifecycleOwner, Observer { user ->
             if(user != null) {
                 updateUser(user)
             }
         })
-    }
-    override fun onPostClicked(post: Post) {
-        activity?.supportFragmentManager?.popBackStack()
-        Log.e("UserFragment", "I've been clicked")
+        postsViewModel.getAllPostsFromUserWithId(userId).observe(viewLifecycleOwner, Observer { postList ->
+            updateUI(postList)
+        })
     }
 
+    override fun onPostClicked(post: Post) {
+        activity?.supportFragmentManager?.popBackStack()
+    }
 }

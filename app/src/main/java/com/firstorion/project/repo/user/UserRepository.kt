@@ -32,6 +32,7 @@ class UserRepository(
     override fun getActiveUser(): LiveData<User> {
         return activeUser
     }
+
     override fun getAllUsers() {
         userDao.getAllUsers()
     }
