@@ -36,13 +36,11 @@ class MainActivity :
             this.application,
             PostApi(RetrofitInstance.postApi)
         )
-        postViewModel =
-            ViewModelProvider(this, postsViewModelFactory).get(PostsViewModel::class.java)
-
         userViewModelFactory = UsersViewModelFactory(
             application,
             UserApi(RetrofitInstance.userApi)
         )
+        postViewModel = ViewModelProvider(this, postsViewModelFactory).get(PostsViewModel::class.java)
         userViewModel = ViewModelProvider(this, userViewModelFactory).get(UsersViewModel::class.java)
         postFragment = PostsFragment(this, postViewModel)
         userFragment = UserFragment(userViewModel, postViewModel)

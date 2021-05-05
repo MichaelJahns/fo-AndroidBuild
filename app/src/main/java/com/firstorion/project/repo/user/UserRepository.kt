@@ -21,7 +21,6 @@ class UserRepository(
     private val userDao: IUsersDatabase
     private var activeUser: LiveData<User>
 
-
     init {
         val db = UserDatabase.getInstance(application)
         userDao = db.userDao()
@@ -29,6 +28,26 @@ class UserRepository(
         activeUser = userDao.getUserWithId(0)
     }
 
+    private fun apiCallAndPutInDB(){
+        getAllUsersFromApi().enqueue(object : retrofit2.Callback<List<User>>{
+            override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
+                if(response.isSuccessful && response.body() != null) {
+                    when (response.code()) {
+                        200 -> {
+                            GlobalScope.launch(Dispatchers.IO) {
+                                insertUsers(response.body()!!)
+                            }
+                        }
+                    }
+                }
+            }
+            override fun onFailure(call: Call<List<User>>, t: Throwable) {
+                Log.e("UserRepository", "Failed to GET From API")
+            }
+        })
+    }
+
+// OVERRIDES
     override fun getActiveUser(): LiveData<User> {
         return activeUser
     }
@@ -52,25 +71,6 @@ class UserRepository(
 
     override suspend fun deleteUserById(userId: Int) {
         userDao.deleteUserWithId(userId)
-    }
-
-    private fun apiCallAndPutInDB(){
-        getAllUsersFromApi().enqueue(object : retrofit2.Callback<List<User>>{
-            override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
-                if(response.isSuccessful && response.body() != null) {
-                    when (response.code()) {
-                        200 -> {
-                            GlobalScope.launch(Dispatchers.IO) {
-                                insertUsers(response.body()!!)
-                            }
-                        }
-                    }
-                }
-            }
-            override fun onFailure(call: Call<List<User>>, t: Throwable) {
-                Log.e("UserRepository", "Failed to GET From API")
-            }
-        })
     }
 
 //        API METHODS
