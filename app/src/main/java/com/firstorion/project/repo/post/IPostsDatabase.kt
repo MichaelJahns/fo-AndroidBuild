@@ -28,6 +28,9 @@ interface IPostsDatabase {
     @Query("DELETE FROM post_table")
     suspend fun deleteAllPosts()
 
+    @Query("DELETE FROM post_table Where userId = :postId")
+    suspend fun deletePostById(postId: Int)
+
     @Query("SELECT * FROM post_table WHERE userId = :userId")
     suspend fun getAllPostsByUser(userId: Int): List<Post>
 }

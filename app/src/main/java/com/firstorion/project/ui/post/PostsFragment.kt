@@ -31,14 +31,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class PostsFragment(
-    private val usersViewModel: UsersViewModel
+    private val courierToUserDetails: CourierToUserDetails,
+    private val postViewModel: PostsViewModel
 ): Fragment(), PostsRVAdapter.OnPostClickedListener {
     private var mHandler: Handler = Handler(Looper.getMainLooper())
-    private lateinit var postViewModel: PostsViewModel
-    private lateinit var postsViewModelFactory: PostsViewModelFactory
-
-    private lateinit var userFragment: UserFragment
-
     //    XML Views
     private lateinit var recyclerView: RecyclerView
     private lateinit var courierPost: Button
@@ -49,13 +45,7 @@ class PostsFragment(
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_posts, container, false)
-        postsViewModelFactory = PostsViewModelFactory(
-            requireActivity().application,
-            PostApi(RetrofitInstance.postApi)
-        )
-        postViewModel =
-            ViewModelProvider(this, postsViewModelFactory).get(PostsViewModel::class.java)
-        userFragment = UserFragment(postViewModel, usersViewModel)
+
         initializeUI(view)
         setUpObservers()
         return view
@@ -102,20 +92,11 @@ class PostsFragment(
             }
         }
 
-    override fun onPostClicked(post: Post) {
-        val bundle = Bundle()
-        bundle.putInt("userId", post.userId)
-        prepareTransition(post.userId)
-        userFragment.arguments = bundle
-        parentFragmentManager
-            .beginTransaction()
-            .replace(R.id.fragmentContainer, userFragment)
-            .addToBackStack(null)
-            .commit()
-
-        Toaster.makeToast(requireContext(), "Clicked upon post: ${post.postId}")
+    override fun onPostClicked(post: Post){
+        courierToUserDetails.handleTransitionToUserDetails(userId = post.userId)
     }
-    fun prepareTransition(userId: Int): LiveData<User> {
-        return usersViewModel.getUserWithId(userId)
+
+    interface CourierToUserDetails{
+        fun handleTransitionToUserDetails(userId: Int)
     }
 }
